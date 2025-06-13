@@ -1,46 +1,25 @@
 import os
-from datetime import timedelta
 
 
 class Config:
+    """Application configuration"""
 
-    # MongoDB Configuration
-    MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/moviedb')
+    # MongoDB configuration
+    MONGO_HOST = os.getenv('MONGO_HOST', 'localhost')
+    MONGO_PORT = os.getenv('MONGO_PORT', '27017')
+    MONGO_USERNAME = os.getenv('MONGO_ROOT_USERNAME')
+    MONGO_PASSWORD = os.getenv('MONGO_ROOT_PASSWORD')
     DATABASE_NAME = os.getenv('DATABASE_NAME', 'moviedb')
 
-    # Flask Configuration
-    SECRET_KEY = os.getenv('SECRET_KEY', 'change-this-secret-key')
-    FLASK_ENV = os.getenv('FLASK_ENV', 'development')
+    # Build MongoDB URI
+    if MONGO_USERNAME and MONGO_PASSWORD:
+        MONGO_URI = f"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{DATABASE_NAME}?authSource=admin"
+    else:
+        MONGO_URI = f"mongodb://{MONGO_HOST}:{MONGO_PORT}/{DATABASE_NAME}"
 
-    # CORS Configuration
-    CORS_ORIGINS = ["*"]
+    # Flask configuration
+    SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-here')
+    DEBUG = os.getenv('FLASK_DEBUG', 'True').lower() == 'true'
 
-    # Other configurations
-    PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
-
-    @staticmethod
-    def init_app(app):
-        pass
-
-
-class DevelopmentConfig(Config):
-    DEBUG = True
-    MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/moviedb')
-
-
-class ProductionConfig(Config):
-    DEBUG = False
-    MONGO_URI = os.getenv('MONGO_URI')
-
-
-class TestingConfig(Config):
-    TESTING = True
-    MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/moviedb_test')
-
-
-config = {
-    'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'testing': TestingConfig,
-    'default': DevelopmentConfig
-}
+    # CORS configuration
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', '*')

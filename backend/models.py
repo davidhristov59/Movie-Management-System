@@ -1,27 +1,23 @@
 from datetime import datetime
 from typing import Optional, Dict, Any
 
-from pymongo import MongoClient
-from bson import ObjectId
-from config import Config
-
 class Movie:
     def __init__(self, title: str, description: str, release_year: int, genre: str,
                  director: str = "", rating: float = 0.0, _id: Optional[str] = None):
 
         self._id = _id
-        self.title = title
-        self.description = description
-        self.release_year = release_year
-        self.genre = genre
-        self.director = director
-        self.rating = rating
+        self.title = title.strip() if title else ""
+        self.description = description.strip() if description else ""
+        self.release_year = int(release_year) if release_year else 0
+        self.genre = genre.strip() if genre else ""
+        self.director = director.strip() if director else ""
+        self.rating = float(rating) if rating is not None else 0.0
         self.created_at = datetime.utcnow()
         self.updated_at = datetime.utcnow()
 
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert movie to dictionary format"""
+        """Convert the Movie object into a dictionary format making it easy to store in MongoDB"""
         return {
             '_id': self._id,
             'title': self.title,
@@ -36,15 +32,15 @@ class Movie:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Movie':
-        """Create Movie instance from a dictionary (such as one loaded from a db or received as JSON"""
+        """Create Movie instance from a dictionary (such as one loaded from a db or received as JSON)"""
         return cls(
             title=data.get('title', ''),
             description=data.get('description', ''),
             release_year=data.get('release_year', 0),
             genre=data.get('genre', ''),
             director=data.get('director', ''),
-            rating=float(data.get('rating', 0)),
-            _id=str(data.get('_id', ''))
+            rating=data.get('rating', 0.0),
+            _id=data.get('_id')
         )
 
     def validate(self) -> Dict[str, str]:
