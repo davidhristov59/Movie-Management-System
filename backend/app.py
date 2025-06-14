@@ -8,27 +8,18 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# MongoDB connection - simplified and fixed
-mongo_host = os.getenv('MONGO_HOST', 'localhost')
-mongo_port = os.getenv('MONGO_PORT', '27017')
-mongo_username = os.getenv('MONGO_ROOT_USERNAME')
-mongo_password = os.getenv('MONGO_ROOT_PASSWORD')
 database_name = os.getenv('DATABASE_NAME', 'moviedb')
+mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost:27017/moviedb')
 
-# Build MongoDB URI
-if mongo_username and mongo_password:
-    mongo_uri = f"mongodb://{mongo_username}:{mongo_password}@{mongo_host}:{mongo_port}/{database_name}?authSource=admin"
-else:
-    mongo_uri = f"mongodb://{mongo_host}:{mongo_port}/{database_name}"
-
-# Create single MongoDB connection
+# Create MongoDB connection
 try:
     client = MongoClient(mongo_uri)
     db = client[database_name]
     movies_collection = db.movies
+
     # Test connection
     client.admin.command('ping')
-    print(f"✅ Connected to MongoDB at {mongo_host}:{mongo_port}")
+    print(f"✅ Connected to MongoDB: {mongo_uri}")
 except Exception as e:
     print(f"❌ Failed to connect to MongoDB: {e}")
     exit(1)
@@ -254,6 +245,6 @@ def internal_error(error):
 
 if __name__ == '__main__':
     print("🎬 Starting Movie Management API...")
-    print(f"📊 Database: {database_name}")
+    print(f"📊 Database: {database_name} ")
     print(f"🔗 MongoDB URI: {mongo_uri.split('@')[0]}@***")
     app.run(debug=True, host='0.0.0.0', port=5001)
