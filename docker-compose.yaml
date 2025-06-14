@@ -13,7 +13,7 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     volumes:
       - mongodb_data:/data/db
-#      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
       - movie_network
 
@@ -34,8 +34,8 @@ services:
       SECRET_KEY: ${SECRET_KEY}
     depends_on:
       - mongodb
-#    volumes:
-#      - ./backend:/app
+    volumes:
+      - ./backend:/app
     networks:
       - movie_network
 
@@ -51,15 +51,14 @@ services:
       API_BASE_URL: http://movie_backend:5001/api
     depends_on:
       - backend
-#    volumes:
-#      - ./frontend:/app
+    volumes:
+      - ./frontend:/app
     networks:
       - movie_network
 
 volumes:
   mongodb_data:
-#    driver: local
-
+    
 networks:
   movie_network:
     driver: bridge
