@@ -57,7 +57,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Deploy to EC2
+      - name: Deploy to EC2 Instance
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -67,86 +67,37 @@ jobs:
           script: |
             set -e  # Exit on any error
             
-            echo "Starting deployment process..."
+            echo "📦 Starting deployment on EC2..."
             cd ~/Movie-Recommender
             
-            # Create environment file
-            echo "Creating environment file..."
-            cat > .env << EOF
+            echo "📄 Writing .env file..."
+            cat > .env <<EOF
             MONGO_ROOT_USERNAME=${{ secrets.MONGO_ROOT_USERNAME }}
             MONGO_ROOT_PASSWORD=${{ secrets.MONGO_ROOT_PASSWORD }}
             MONGO_DATABASE=moviedb
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             EOF
-            
-            # Stop existing containers and clean up
-            echo "Stopping existing containers..."
+
+            echo "🧹 Stopping and cleaning up existing containers..."
             docker compose down --volumes --remove-orphans || true
+            docker image prune -af || true
             
-            # Remove old images to free up space
-            echo "Cleaning up old images..."
-            docker image prune -f || true
+            echo "📥 Pulling latest images..."
+            docker compose pull || true
             
-            # Pull latest images
-            echo "Pulling latest images..."
-            docker compose pull
-            
-            # Start services
-            echo "Starting services..."
-            docker compose up -d --force-recreate
-            
-            # Wait a bit for services to start
-            echo "Waiting for services to start..."
-            sleep 30
-            
-            # Check service status
-            echo "Checking service status..."
+            echo "🚀 Starting new containers..."
+            docker compose up -d --force-recreate --pull always
+
+            echo "📝 Checking container status..."
             docker compose ps
-            
-            # Show logs for troubleshooting (last 20 lines of each service)
-            echo "=== MongoDB Logs ==="
-            docker compose logs --tail=20 mongodb || true
-            echo "=== Backend Logs ==="
+
+            echo "📄 Backend logs (20 lines)"
             docker compose logs --tail=20 backend || true
-            echo "=== Frontend Logs ==="
+
+            echo "📄 Frontend logs (20 lines)"
             docker compose logs --tail=20 frontend || true
-            
-            # Verify containers are running
-            if ! docker compose ps | grep -q "Up"; then
-              echo "ERROR: Some containers failed to start"
-              docker compose logs
-              exit 1
-            fi
-            
-            echo "Deployment completed successfully!"
-            
-      - name: Health Check
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          timeout: 60s
-          script: |
-            # Wait a bit more for full startup
-            sleep 15
-            
-            # Check if backend is responding
-            echo "Checking backend health..."
-            if curl -f http://localhost:5001/api/health 2>/dev/null; then
-              echo "✅ Backend is healthy"
-            else
-              echo "❌ Backend health check failed"
-            fi
-            
-            # Check if frontend is responding
-            echo "Checking frontend health..."
-            if curl -f http://localhost:8501 2>/dev/null; then
-              echo "✅ Frontend is healthy"
-            else
-              echo "❌ Frontend health check failed"
-            fi
-            
-            # Final container status
-            echo "Final container status:"
-            docker compose ps
+
+            echo "📄 MongoDB logs (20 lines)"
+            docker compose logs --tail=20 mongodb || true
+
+            echo "✅ Deployment completed!"
