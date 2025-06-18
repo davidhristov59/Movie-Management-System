@@ -31,7 +31,8 @@ services:
 #      MONGO_HOST: mongodb
 #      MONGO_PORT: 27017
       DATABASE_NAME: ${MONGO_DATABASE}
-      FLASK_ENV: ${FLASK_ENV}
+      # FLASK_ENV: ${FLASK_ENV}
+      FLASK_ENV: production
       SECRET_KEY: ${SECRET_KEY}
     depends_on:
       - mongodb
@@ -51,7 +52,7 @@ services:
       - "8501:8501"
     environment:
       API_BASE_URL: http://movie_backend:5001/api
-#      BACKEND_URL: http://movie_backend:5001
+      BACKEND_URL: http://movie_backend:5001
     depends_on:
       - backend
 #    volumes:
