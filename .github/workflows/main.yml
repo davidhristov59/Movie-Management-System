@@ -53,9 +53,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |  
-            cd ~/Movie-Recommender
+            cd ~/movie-app
              
-
             # Create environment file
             cat > .env << EOF
             MONGO_ROOT_USERNAME=${{ secrets.MONGO_ROOT_USERNAME }}
