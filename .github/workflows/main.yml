@@ -87,25 +87,25 @@ jobs:
             EOF
 
             echo "🧹 Stopping and cleaning up existing containers..."
-            docker compose down --volumes --remove-orphans || true
+            docker-compose down --volumes --remove-orphans || true
             docker image prune -af || true
 
             echo "📥 Pulling latest images..."
-            docker compose pull || true
+            docker-compose pull || true
 
             echo "🚀 Starting new containers..."
-            docker compose up -d --force-recreate --pull always
+            docker-compose up -d --force-recreate
 
             echo "📝 Checking container status..."
-            docker compose ps
+            docker-compose ps
 
             echo "📄 Backend logs (20 lines)"
-            docker compose logs --tail=20 backend || true
+            docker-compose logs --tail=20 backend || true
 
             echo "📄 Frontend logs (20 lines)"
-            docker compose logs --tail=20 frontend || true
+            docker-compose logs --tail=20 frontend || true
 
             echo "📄 MongoDB logs (20 lines)"
-            docker compose logs --tail=20 mongodb || true
+            docker-compose logs --tail=20 mongodb || true
 
             echo "✅ Deployment completed!"
