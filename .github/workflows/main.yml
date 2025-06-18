@@ -68,7 +68,6 @@ jobs:
             MONGO_ROOT_PASSWORD=${{ secrets.MONGO_ROOT_PASSWORD }}
             MONGO_DATABASE=moviedb
             SECRET_KEY=${{ secrets.SECRET_KEY }}
-            FLASK_ENV=production
             EOF
 
             # Deploy with latest images
