@@ -18,9 +18,10 @@ services:
       - movie_network
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+#    build:
+#      context: ./backend
+#      dockerfile: Dockerfile
+    image: davidh248/movie-backend:latest
     container_name: movie_backend
     restart: unless-stopped
     ports:
@@ -34,25 +35,27 @@ services:
       SECRET_KEY: ${SECRET_KEY}
     depends_on:
       - mongodb
-    volumes:
-      - ./backend:/app
+#    volumes:
+#      - ./backend:/app
     networks:
       - movie_network
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+    image: davidh248/movie-frontend:latest
     container_name: movie_frontend
     restart: unless-stopped
     ports:
       - "8501:8501"
     environment:
       API_BASE_URL: http://movie_backend:5001/api
+#      BACKEND_URL: http://movie_backend:5001
     depends_on:
       - backend
-    volumes:
-      - ./frontend:/app
+#    volumes:
+#      - ./frontend:/app
     networks:
       - movie_network
 
