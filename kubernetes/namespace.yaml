@@ -1,0 +1,7 @@
+# Namespace configuration for Application
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: movie-recommender
+  labels:
+    app: movie-recommender

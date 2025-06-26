@@ -1,0 +1,49 @@
+# Backend Service (ClusterIP for internal communication)
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: movie-recommender
+  labels:
+    app: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 5001
+      targetPort: 5001
+  type: ClusterIP
+---
+# Frontend Service (LoadBalancer for external access)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: movie-recommender
+  labels:
+    app: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      port: 8501
+      targetPort: 8501
+  type: LoadBalancer
+---
+# MongoDB Service (ClusterIP for internal communication)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: movie-recommender
+  labels:
+    app: mongodb
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    app: mongodb
+  type: ClusterIP

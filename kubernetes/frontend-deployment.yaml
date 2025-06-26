@@ -1,0 +1,32 @@
+                 # Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  namespace: movie-recommender
+  labels:
+    app: frontend
+spec:
+  replicas: 2 # change it to 1 if you want to run only one instance
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: davidh248/movie-frontend:1.0 # use tag 1.0, not latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8501
+          env:
+            - name: API_BASE_URL
+              value: "http://backend-service:5001/api"
+            - name: BACKEND_URL
+              value: "http://backend-service:5001"

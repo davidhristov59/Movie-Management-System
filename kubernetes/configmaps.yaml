@@ -1,0 +1,22 @@
+# ConfigMap for Application
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: movie-recommender
+data:
+    MONGO_DATABASE: "moviedb"
+    FLASK_ENV: "production"
+    MONGO_HOST: "mongodb-service"
+    MONGO_PORT: "27017"
+---
+# ConfigMap for MongoDB
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongodb-config
+  namespace: movie-recommender
+data:
+    MONGO_INITDB_DATABASE: "moviedb"
+
+
