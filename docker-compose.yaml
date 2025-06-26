@@ -22,7 +22,7 @@ services:
 #    build:
 #      context: ./backend
 #      dockerfile: Dockerfile
-    image: davidh248/movie-backend:latest
+    image: davidh248/movie-backend:1.0
     container_name: movie_backend
     restart: unless-stopped
     ports:
@@ -46,7 +46,7 @@ services:
 #    build:
 #      context: ./frontend
 #      dockerfile: Dockerfile
-    image: davidh248/movie-frontend:latest
+    image: davidh248/movie-frontend:1.0
     container_name: movie_frontend
     restart: unless-stopped
     ports:
