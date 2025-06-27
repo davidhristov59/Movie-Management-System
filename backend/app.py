@@ -8,12 +8,13 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-database_name = os.getenv('DATABASE_NAME', 'moviedb')
+database_name = os.getenv('MONGO_DATABASE', 'moviedb')
 mongo_uri = os.getenv('MONGO_URI', 'mongodb://localhost:27017/moviedb')
 
 # Create MongoDB connection
 try:
     client = MongoClient(mongo_uri)
+    # client = MongoClient("mongodb://admin:admin@movie_mongodb:27017/moviedb?authSource=admin")
     db = client[database_name]
     movies_collection = db.movies
 
