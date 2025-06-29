@@ -4,6 +4,24 @@
 // Switch to the moviedb database
 db = db.getSiblingDB('moviedb');
 
+// // CREATE USER - Add this section!
+// print('👤 Creating database user...');
+// db.createUser({
+//   user: 'admin',
+//   pwd: 'admin',
+//   roles: [
+//     {
+//       role: 'readWrite',
+//       db: 'moviedb'
+//     },
+//     {
+//       role: 'dbAdmin',
+//       db: 'moviedb'
+//     }
+//   ]
+// });
+// print('✅ User created successfully!');
+
 // Create collections
 db.createCollection('movies');
 
