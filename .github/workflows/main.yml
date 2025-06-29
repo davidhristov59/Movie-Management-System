@@ -67,18 +67,18 @@ jobs:
           script: |
             set -e
 
-            echo "📦 Starting deployment on EC2..."
+            echo "Starting deployment on EC2..."
 
             PROJECT_DIR=~/Movie-Recommender
 
             if [ ! -d "$PROJECT_DIR" ]; then
-              echo "📥 Cloning repository..."
+              echo "Cloning repository..."
               git clone https://github.com/${{ github.repository }} "$PROJECT_DIR"
             fi
 
             cd "$PROJECT_DIR"
 
-            echo "📄 Writing .env file..."
+            echo "Writing .env file..."
             cat > .env <<EOF
             MONGO_ROOT_USERNAME=${{ secrets.MONGO_ROOT_USERNAME }}
             MONGO_ROOT_PASSWORD=${{ secrets.MONGO_ROOT_PASSWORD }}
@@ -86,26 +86,26 @@ jobs:
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             EOF
 
-            echo "🧹 Stopping and cleaning up existing containers..."
+            echo "Stopping and cleaning up existing containers..."
             docker-compose down --volumes --remove-orphans || true
             docker image prune -af || true
 
-            echo "📥 Pulling latest images..."
+            echo "Pulling latest images..."
             docker-compose pull || true
 
-            echo "🚀 Starting new containers..."
+            echo "Starting new containers..."
             docker-compose up -d --force-recreate
 
-            echo "📝 Checking container status..."
+            echo "Checking container status..."
             docker-compose ps
 
-            echo "📄 Backend logs (20 lines)"
+            echo "Backend logs (20 lines)"
             docker-compose logs --tail=20 backend || true
 
-            echo "📄 Frontend logs (20 lines)"
+            echo "Frontend logs (20 lines)"
             docker-compose logs --tail=20 frontend || true
 
-            echo "📄 MongoDB logs (20 lines)"
+            echo "MongoDB logs (20 lines)"
             docker-compose logs --tail=20 mongodb || true
 
             echo "✅ Deployment completed!"
