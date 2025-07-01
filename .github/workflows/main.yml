@@ -57,6 +57,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Start EC2 instance
+        run: |
+          echo "🚀 Starting EC2 instance..."
+          aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+          echo "⏳ Waiting for instance to be running..."
+          aws ec2 wait instance-running --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+          echo "✅ EC2 instance is now running!"
+
+      - name: Get EC2 public IP
+        id: ec2-ip
+        run: |
+          PUBLIC_IP=$(aws ec2 describe-instances \
+            --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
+            --query 'Reservations[0].Instances[0].PublicIpAddress' \
+            --output text)
+          echo "ip=$PUBLIC_IP" >> $GITHUB_OUTPUT
+          echo "🌐 EC2 Public IP: $PUBLIC_IP"
+
+      - name: Wait for SSH to be ready
+        run: |
+          echo "🔗 Waiting for SSH to be ready..."
+          for i in {1..30}; do
+            if ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -i <(echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}") ${{ secrets.EC2_USER }}@${{ steps.ec2-ip.outputs.ip }} exit 2>/dev/null; then
+              echo "✅ SSH is ready!"
+              break
+            fi
+            echo "⏳ Attempt $i/30 - SSH not ready yet, waiting 10 seconds..."
+            sleep 10
+          done
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
