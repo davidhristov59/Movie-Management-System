@@ -25,8 +25,8 @@ A full-stack movie management web application built using **Flask**, **Streamlit
 | Database    | MongoDB           |
 | Cloud       | AWS ec2           |
 | CI/CD       | GitHub Actions    |
-| Orchestration   Kubernetes      |
-| DevOps      | Docker, Docker Compose|
+| Orchestration |  Kubernetes      |
+| Deployment      | Docker, Docker Compose|
 
 ---
 
